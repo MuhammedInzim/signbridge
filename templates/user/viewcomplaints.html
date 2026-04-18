@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reports · SignBridge</title>
+    <!-- Bootstrap 5 (for modal, but we override with theme) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts Inter + Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            background: linear-gradient(145deg, #0b1f2a 0%, #1c3a4a 100%);
+            min-height: 100vh;
+            color: #e2f0f5;
+            line-height: 1.5;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* cool abstract overlays (matching admin dashboard) */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 200, 0.06) 0%, transparent 35%),
+                radial-gradient(circle at 90% 70%, rgba(100, 255, 220, 0.05) 0%, transparent 45%),
+                repeating-linear-gradient(45deg, rgba(64, 224, 208, 0.02) 0px, rgba(64, 224, 208, 0.02) 2px, transparent 2px, transparent 25px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* floating geometric shapes (cool hand silhouette) */
+        body::after {
+            content: "";
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 500px;
+            height: 500px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.15"><path fill="%2340e0d0" d="M140,40 L180,100 L140,160 L60,160 L20,100 L60,40 Z" /><circle cx="100" cy="100" r="25" fill="%2320b0aa" opacity="0.6"/></svg>');
+            background-size: 400px 400px;
+            background-repeat: repeat;
+            background-position: bottom right;
+            filter: drop-shadow(0 0 4px #20b2aa);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== TOP MENU BAR (cool teal / mint) ===== */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #0f2a33f0;
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 6px 24px rgba(0, 30, 30, 0.8), 0 0 0 1px #40e0d040;
+            border-bottom: 1px solid #40e0d0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand .logo-mark {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #20b2aa, #40e0d0);
+            color: #022028;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            box-shadow: 0 4px 8px #20b2aa30;
+            border: 1px solid #a0f0e8;
+        }
+
+        .brand span {
+            font-weight: 700;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, #e0fff8, #40e0d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+            text-shadow: 0 2px 3px #20b2aa30;
+        }
+
+        .right-section {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #b0e8e0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+            background: #1c4e5a;
+            border-color: #40e0d0;
+            box-shadow: 0 0 6px #40e0d030;
+        }
+
+        .nav-links a i {
+            font-size: 1rem;
+            color: #40e0d0;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #0b333d;
+            border-radius: 40px;
+            border: 1px solid #40e0d080;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .profile-section:hover {
+            background: #1d5a66;
+            border-color: #40e0d0;
+            color: #ffffff;
+        }
+
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .profile-name {
+            color: #e0f8f0;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* ===== MAIN CONTENT AREA ===== */
+        .main-content {
+            margin-top: 90px;
+            padding: 2rem 2.5rem 1rem;
+            position: relative;
+            z-index: 10;
+            max-width: 1300px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* page header with hand images - themed */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(20, 60, 65, 0.6);
+            backdrop-filter: blur(12px);
+            padding: 1.5rem 2rem;
+            border-radius: 60px;
+            margin-bottom: 2.5rem;
+            border: 1px solid #40e0d060;
+            box-shadow: 0 20px 40px -12px #00181e, 0 0 0 1px #40e0d020 inset;
+        }
+
+        .page-header h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #ffffff, #80f0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .hand-icons {
+            display: flex;
+            gap: 1.2rem;
+            font-size: 2.2rem;
+            filter: drop-shadow(0 8px 10px #20b2aa40);
+            background: rgba(30, 80, 85, 0.5);
+            padding: 0.6rem 2rem;
+            border-radius: 100px;
+            border: 1px solid #40e0d0;
+            backdrop-filter: blur(4px);
+        }
+
+        .hand-icons span {
+            transition: transform 0.2s;
+            cursor: default;
+        }
+
+        .hand-icons span:hover {
+            transform: scale(1.15) rotate(5deg);
+            filter: drop-shadow(0 0 4px #40e0d0);
+        }
+
+        /* action buttons */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .action-bar .left{
+            flex: 1;
+        }
+        .action-bar .center{
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            margin-right: 360px;
+        }
+        .action-bar .right{
+            flex: 1;
+        }
+
+        .btn-add {
+            background: linear-gradient(145deg, #1d4650, #0e3038);
+            border: 1px solid #20b2aa;
+            padding: 0.8rem 2.2rem;
+            border-radius: 40px;
+            color: #e0f0f0;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 18px -10px #00181e;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-add::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(64, 224, 208, 0.1), transparent 60%);
+            pointer-events: none;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-4px) scale(1.02);
+            background: #235b66;
+            border-color: #80f0e0;
+            box-shadow: 0 30px 45px -15px #00181e, 0 0 0 2px #40e0d0;
+            color: #ffffff;
+        }
+
+        .btn-add i {
+            color: #40e0d0;
+        }
+
+        .btn-back {
+            background: linear-gradient(145deg, #1d4650, #0e3038);
+            border: 1px solid #20b2aa;
+            padding: 0.8rem 2.2rem;
+            border-radius: 40px;
+            color: #e0f0f0;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-back::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(64, 224, 208, 0.1), transparent 60%);
+            pointer-events: none;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-4px) scale(1.02);
+            background: #235b66;
+            border-color: #80f0e0;
+            box-shadow: 0 30px 45px -15px #00181e, 0 0 0 2px #40e0d0;
+            color: #ffffff;
+        }
+
+        /* table container - themed */
+        .table-container {
+            background: rgba(20, 60, 65, 0.5);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px -18px #00181e, 0 0 0 1px #40e0d020 inset;
+            border: 1px solid #40e0d060;
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            border-style: hidden;
+            border-radius: 32px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #1d4a55;
+            color: #e0f8f0;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1.2rem 1rem;
+            border: none;
+            white-space: nowrap;
+            border-bottom: 2px solid #40e0d0;
+        }
+
+        td {
+            padding: 1.2rem 1rem;
+            color: #e0f0f0;
+            border-bottom: 1px solid #40e0d040;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #1d4e5a;
+        }
+
+        td strong {
+            color: #a0f0e8;
+        }
+
+        /* status badges - themed */
+        .status-replied {
+            background: #1d5a55;
+            color: #a0f8e8;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            border: 1px solid #40e0d0;
+            box-shadow: 0 0 10px #20b2aa40;
+        }
+
+        .status-pending {
+            background: #4a4a3a;
+            color: #f0e0b0;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            border: 1px solid #d0b040;
+        }
+
+        /* hand note - themed */
+        .hand-note {
+            text-align: center;
+            margin: 2.5rem 0 1rem;
+            color: #b0e0e0;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            border-top: 1px dashed #40e0d040;
+            padding-top: 1.5rem;
+        }
+
+        .hand-note span {
+            font-size: 1rem;
+            filter: drop-shadow(0 0 2px #40e0d0);
+        }
+
+        /* Bootstrap modal theme override - matching teal theme */
+        .modal-content {
+            background: linear-gradient(145deg, #123c44, #0b2d33);
+            border: 1px solid #40e0d0;
+            border-radius: 40px;
+            padding: 0.5rem;
+            box-shadow: 0 20px 40px #00181e;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #40e0d060;
+            padding: 1.5rem 1.5rem 1rem;
+        }
+
+        .modal-header .modal-title {
+            color: #a0f0e8;
+            font-weight: 700;
+            font-size: 1.3rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(0.8) sepia(1) hue-rotate(140deg);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-body label {
+            color: #80e8e0;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .modal-body textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #40e0d080;
+            border-radius: 30px;
+            background: #0f2a33;
+            color: #e0f0f0;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .modal-body textarea:focus {
+            outline: none;
+            border-color: #80f0e0;
+            box-shadow: 0 0 0 3px #40e0d040;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #40e0d060;
+            padding: 1.2rem 1.5rem;
+            gap: 10px;
+        }
+
+        .modal-footer .btn {
+            border-radius: 40px;
+            padding: 0.7rem 2rem;
+            font-weight: 600;
+            border: none;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .modal-footer .btn-secondary {
+            background: #154851;
+            color: #80f0e0;
+            border: 1px solid #20b2aa;
+        }
+
+        .modal-footer .btn-secondary:hover {
+            background: #1c5e68;
+        }
+
+        .modal-footer .btn-primary {
+            background: #20b2aa;
+            color: #022028;
+        }
+
+        .modal-footer .btn-primary:hover {
+            background: #40e0d0;
+        }
+
+        /* ===== FOOTER SECTION (cool teal/mint) ===== */
+        .site-footer {
+            background: #0b2d33;
+            backdrop-filter: blur(12px);
+            border-top: 2px solid #20b2aa;
+            padding: 2.5rem 2rem 2rem;
+            margin-top: 3rem;
+            color: #c0f0e8;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            box-shadow: 0 -10px 30px -5px #00181e;
+        }
+
+        .footer-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2.5rem;
+        }
+
+        .footer-section {
+            flex: 1 1 200px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            color: #80f0e0;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid #20b2aa;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-section h3 i {
+            color: #40e0d0;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.7rem;
+        }
+
+        .footer-links a {
+            color: #b0e0e0;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+            padding-left: 5px;
+        }
+
+        .footer-links a i {
+            color: #20b2aa;
+            font-size: 0.8rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            color: #b0e0e0;
+        }
+
+        .contact-item i {
+            color: #40e0d0;
+            width: 20px;
+            font-size: 1rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #20b2aa60;
+            color: #a0c8c8;
+            font-size: 0.9rem;
+        }
+
+        /* responsive tweaks */
+        @media (max-width: 800px) {
+            .page-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            .top-bar {
+                padding: 0.8rem 1rem;
+                flex-wrap: wrap;
+            }
+            .right-section {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+            .nav-links {
+                gap: 1rem;
+            }
+            .main-content {
+                padding: 1.5rem;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 2rem;
+            }
+        }
+        @media (max-width: 550px) {
+            .brand span {
+                font-size: 1.1rem;
+            }
+            .nav-links a span {
+                display: none;
+            }
+            .nav-links a i {
+                font-size: 1.3rem;
+            }
+            .profile-name {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP MENU BAR (cool teal / mint) with profile section -->
+<div class="top-bar">
+    <div class="brand">
+        <div class="logo-mark">⌘</div>
+        <span>SignBridge · Dashboard</span>
+    </div>
+    <div class="right-section">
+        <div class="nav-links">
+            <a href="/userhomepage">
+                <i class="fa-solid fa-house"></i><span>Home</span>
+            </a>
+            <a href="/viewfeedback">
+                <i class="fa-solid fa-comment"></i> <span>Feedback</span>
+            </a>
+            <a style="cursor: default; color: #ffffff; background: #192f35; border-color: #40e0d0;">
+                <i class="fa-solid fa-flag"></i><span>Report</span>
+            </a>
+        </div>
+        <div class="profile-section" onclick="window.location.href='Profilesview'">
+            <div class="profile-icon">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <!-- header with hand icons -->
+    <div class="page-header">
+        <h2>My Complaints</h2>
+        <div class="hand-icons">
+            <span>🖐️</span>
+            <span>🤟</span>
+            <span>✌️</span>
+            <span>👋</span>
+        </div>
+    </div>
+
+    <!-- action bar: Add Complaint button and Back button -->
+    <div class="action-bar">
+        <div class="left"><a href="/userhomepage" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Home</a></div>
+        <!-- Bootstrap modal trigger button (styled with theme) -->
+        <div class="center"><button type="button" class="btn-add" data-bs-toggle="modal" data-bs-target="#complaintModal" data-bs-whatever="@fat">
+            <i class="fa-solid fa-plus"></i> Report Issue
+        </button></div>
+    </div>
+
+    <!-- table container -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Date</th>
+                    <th>Complaint</th>
+                    <th>Reply</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Django loop – exactly as provided -->
+                {% for i in complaints %}
+                <tr>
+                    <td><strong>{{ i.USER.Name }}</strong></td>
+                    <td>{{ i.Date }}</td>
+                    <td>{{ i.Complaints }}</td>
+                    <td>
+                        {% if i.Reply %}
+                            <span class="status-replied">{{ i.Reply }}</span>
+                        {% else %}
+                            <span class="status-pending">Not replied yet</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 2rem; color: #b0e0e0; text-align: center;">No complaints found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- decorative hand note -->
+    <div class="hand-note">
+        <span>🖐️</span> <span>🤟</span> <span>👌</span> <span>✌️</span> <span>🤙</span>
+        <span style="margin-left: 6px;">— we're here to listen</span>
+    </div>
+</div>
+
+<!-- BOOTSTRAP MODAL for adding complaint (fully styled to match theme) -->
+<div class="modal fade" id="complaintModal" tabindex="-1" aria-labelledby="complaintModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="complaintModalLabel">
+          <i class="fa-solid fa-pen" style="color: #40e0d0; margin-right: 8px;"></i> Enter your complaint
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="/usercomplaints">
+            {% csrf_token %}
+          <div class="mb-3">
+            <label for="complaint-text" class="col-form-label">Your complaint:</label>
+            <textarea class="form-control" id="complaint-text" name="Complaints" placeholder="Please describe your concern..."></textarea>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"><i class="fa-regular fa-paper-plane"></i> Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS (required for modal) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+<!-- FOOTER with Quick Links, Contact, Connect -->
+<footer class="site-footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3><i class="fa-solid fa-link"></i> Quick Links</h3>
+            <ul class="footer-links">
+                <li><a href="/userhomepage"><i class="fa-solid fa-chevron-right"></i> Home</a></li>
+                <li><a href="/isl_page"><i class="fa-solid fa-chevron-right"></i> ISL Conversion</a></li>
+                <li><a href="/StartSignAnimationView"><i class="fa-solid fa-chevron-right"></i> Reverse Sign Conversion</a></li>
+                <li><a href="/signs"><i class="fa-solid fa-chevron-right"></i> Learn Signs</a></li>
+                <li><a href="/viewfeedback"><i class="fa-solid fa-chevron-right"></i> Feedback</a></li>
+                <li><a style="color: #20b2aa;"><i class="fa-solid fa-chevron-right"></i> Report</a></li>
+                <li><a href="/Profilesview"><i class="fa-solid fa-chevron-right"></i> Profile</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3><i class="fa-solid fa-address-book"></i> Contact</h3>
+            <div class="contact-item">
+                <i class="fa-solid fa-phone"></i>
+                <span>+91 96575 40987</span>
+            </div>
+            <div class="contact-item">
+                <i class="fa-solid fa-envelope"></i>
+                <span>devs@signbridge.cool</span>
+            </div>
+            <div class="contact-item">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Coastal Hub, Wave Street</span>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h3><i class="fa-regular fa-compass"></i> Connect Us</h3>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <a href="#" style="color: #40e0d0; font-size: 1.5rem;"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#" style="color: #40e0d0; font-size: 1.5rem;"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" style="color: #40e0d0; font-size: 1.5rem;"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 SignBridge · All rights reserved</p>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Submit Feedback · SignBridge</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts Inter + Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            background: linear-gradient(145deg, #0b1f2a 0%, #1c3a4a 100%);
+            min-height: 100vh;
+            color: #e2f0f5;
+            line-height: 1.5;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* cool abstract overlays */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 200, 0.06) 0%, transparent 35%),
+                radial-gradient(circle at 90% 70%, rgba(100, 255, 220, 0.05) 0%, transparent 45%),
+                repeating-linear-gradient(45deg, rgba(64, 224, 208, 0.02) 0px, rgba(64, 224, 208, 0.02) 2px, transparent 2px, transparent 25px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* floating geometric shapes (cool hand silhouette) */
+        body::after {
+            content: "";
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 380px;
+            height: 380px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.1"><path fill="%2340e0d0" d="M100,30 L120,80 L180,80 L130,115 L150,175 L100,140 L50,175 L70,115 L20,80 L80,80 Z"/></svg>');
+            background-size: 300px 300px;
+            background-repeat: no-repeat;
+            background-position: bottom right;
+            filter: drop-shadow(0 0 4px #20b2aa);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== LOADING ANIMATION OVERLAY (cool themed) ===== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #0b1f2a, #1c3a4a);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-container {
+            text-align: center;
+            animation: float 2.5s ease-in-out infinite;
+        }
+
+        .loader-logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #20b2aa, #40e0d0);
+            color: #022028;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            font-weight: 400;
+            margin: 0 auto 1.8rem;
+            box-shadow: 
+                0 15px 30px rgba(0,0,0,0.5),
+                0 0 0 2px #40e0d0 inset,
+                0 0 30px #20b2aa;
+            border: 1px solid #a0f0e8;
+            animation: pulse-glow 1.8s ease-in-out infinite;
+        }
+
+        .loader-text {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #80f0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+            margin-bottom: 1.2rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .loader-dots {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            background: #40e0d0;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+            box-shadow: 0 0 10px #20b2aa;
+        }
+
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow:
+                    0 15px 30px rgba(0,0,0,0.5),
+                    0 0 0 2px #40e0d0 inset,
+                    0 0 30px #20b2aa;
+            }
+            50% {
+                box-shadow:
+                    0 20px 40px rgba(0,0,0,0.6),
+                    0 0 0 3px #80f0e0 inset,
+                    0 0 50px #40e0d0;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0.6);
+                opacity: 0.6;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ===== TOP MENU BAR (cool teal / mint) ===== */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #0f2a33f0;
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 6px 24px rgba(0, 30, 30, 0.8), 0 0 0 1px #40e0d040;
+            border-bottom: 1px solid #40e0d0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand .logo-mark {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #20b2aa, #40e0d0);
+            color: #022028;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            box-shadow: 0 4px 8px #20b2aa30;
+            border: 1px solid #a0f0e8;
+        }
+
+        .brand span {
+            font-weight: 700;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, #e0fff8, #40e0d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+            text-shadow: 0 2px 3px #20b2aa30;
+        }
+
+        .right-section {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #b0e8e0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+            background: #1c4e5a;
+            border-color: #40e0d0;
+            box-shadow: 0 0 6px #40e0d030;
+        }
+
+        .nav-links a i {
+            font-size: 1rem;
+            color: #40e0d0;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #0b333d;
+            border-radius: 40px;
+            border: 1px solid #40e0d080;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .profile-section:hover {
+            background: #1d5a66;
+            border-color: #40e0d0;
+            color: #ffffff;
+        }
+
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .profile-name {
+            color: #e0f8f0;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* ===== MAIN CONTENT AREA ===== */
+        .main-content {
+            margin-top: 90px;
+            padding: 1.5rem 2rem 2rem;
+            position: relative;
+            z-index: 10;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* page header with hand images - cool themed */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(20, 60, 65, 0.6);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            margin-bottom: 2rem;
+            border: 1px solid #40e0d060;
+            box-shadow: 0 20px 40px -12px #00181e, 0 0 0 1px #40e0d020 inset;
+        }
+
+        .page-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #ffffff, #80f0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .hand-icons {
+            display: flex;
+            gap: 1rem;
+            font-size: 2.5rem;
+            filter: drop-shadow(0 4px 8px #20b2aa60);
+        }
+
+        /* back button - cool themed */
+        .back-link {
+            margin-bottom: 1.2rem;
+        }
+
+        .btn-back {
+            background: #154851;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            color: #e0f0f0;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 18px -10px #00181e;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: 1px solid #40e0d080;
+        }
+
+        .btn-back:hover {
+            background: #1d6675;
+            color: white;
+            transform: translateY(-2px);
+            border-color: #80f0e0;
+        }
+
+        .btn-back i {
+            color: #40e0d0;
+        }
+
+        /* feedback form card - cool themed */
+        .form-card {
+            background: rgba(20, 60, 65, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            padding: 2.5rem 2.5rem 3rem;
+            box-shadow: 0 20px 40px -18px #00181e;
+            border: 1px solid #40e0d060;
+            text-align: center;
+        }
+
+        .form-card h3 {
+            font-size: 1.5rem;
+            color: #b0f0e0;
+            margin-bottom: 2rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        /* star rating - custom with mint/gold */
+        .stars {
+            display: inline-flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+            margin: 0.5rem 0 1rem;
+        }
+        .stars input {
+            display: none;
+        }
+        .stars label {
+            font-size: 40px;
+            color: #4d8080;        /* muted teal for unselected */
+            cursor: pointer;
+            padding: 0 5px;
+            transition: color 0.2s;
+        }
+        .stars input:checked ~ label,
+        .stars label:hover,
+        .stars label:hover ~ label {
+            color: #40e0d0;         /* mint gold */
+        }
+
+        .rating-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #80e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        /* textarea */
+        .feedback-field {
+            margin: 1.5rem 0 2rem;
+        }
+
+        .feedback-field label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #80e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 0.8rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 1.5px solid rgba(64, 224, 208, 0.4);
+            border-radius: 40px;
+            font-size: 0.95rem;
+            background: rgba(10, 45, 50, 0.7);
+            color: #e0f0f0;
+            transition: all 0.15s ease;
+            font-family: 'Space Grotesk', sans-serif;
+            resize: vertical;
+            min-height: 120px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #40e0d0;
+            background: rgba(20, 60, 65, 0.8);
+            box-shadow: 0 0 0 3px rgba(64, 224, 208, 0.2);
+        }
+
+        /* submit button */
+        .btn-submit {
+            background: linear-gradient(135deg, #154851, #1d6675);
+            border: none;
+            padding: 0.9rem 2.5rem;
+            border-radius: 40px;
+            color: #e0f0f0;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 10px 22px -12px #00181e, 0 1px 2px #40e0d040 inset;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: auto;
+            min-width: 180px;
+            border: 1px solid #40e0d080;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #1d6675, #248a9c);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 28px -14px #000000;
+            border-color: #80f0e0;
+        }
+
+        .btn-submit i {
+            font-size: 1.2rem;
+            color: #40e0d0;
+        }
+
+        /* hand note at bottom */
+        .hand-note {
+            text-align: center;
+            margin: 2rem 0 1rem;
+            color: #80e8e0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .hand-note span {
+            font-size: 1.5rem;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 2px #40e0d0);
+        }
+
+        /* ===== FOOTER SECTION (cool teal/mint) ===== */
+        .site-footer {
+            background: #0b2d33;
+            backdrop-filter: blur(12px);
+            border-top: 2px solid #20b2aa;
+            padding: 2.5rem 2rem 2rem;
+            margin-top: 2rem;
+            color: #c0f0e8;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            box-shadow: 0 -10px 30px -5px #00181e;
+        }
+
+        .footer-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2.5rem;
+        }
+
+        .footer-section {
+            flex: 1 1 200px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            color: #80f0e0;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid #20b2aa;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-section h3 i {
+            color: #40e0d0;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.7rem;
+        }
+
+        .footer-links a {
+            color: #b0e0e0;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+            padding-left: 5px;
+        }
+
+        .footer-links a i {
+            color: #20b2aa;
+            font-size: 0.8rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            color: #b0e0e0;
+        }
+
+        .contact-item i {
+            color: #40e0d0;
+            width: 20px;
+            font-size: 1rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #20b2aa60;
+            color: #a0c8c8;
+            font-size: 0.9rem;
+        }
+
+        /* responsive */
+        @media (max-width: 600px) {
+            .page-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+            .form-card {
+                padding: 1.8rem;
+            }
+            .top-bar {
+                padding: 0.8rem 1rem;
+            }
+            .right-section {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+            .nav-links {
+                gap: 1rem;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 2rem;
+            }
+        }
+        @media (max-width: 500px) {
+            .brand span {
+                font-size: 1.1rem;
+            }
+            .nav-links a span {
+                display: none;
+            }
+            .nav-links a i {
+                font-size: 1.3rem;
+            }
+            .profile-name {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- LOADING ANIMATION OVERLAY (cool themed) -->
+<!-- <div class="loading-overlay" id="loadingOverlay">
+    <div class="loader-container">
+        <div class="loader-logo">⌘</div>
+        <div class="loader-text">SignBridge</div>
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+</div> -->
+
+<!-- TOP MENU BAR (cool teal/mint) -->
+<div class="top-bar">
+    <div class="brand">
+        <div class="logo-mark">⌘</div>
+        <span>SignBridge · Feedback</span>
+    </div>
+    
+    <div class="right-section">
+        <div class="nav-links">
+            <a href="/userhomepage"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+            <a style="cursor: default; color: #ffffff; background: #192f35; border-color: #40e0d0;">
+            <i class="fa-solid fa-comment"></i> <span>Feedback</span>
+            </a>
+        </div>
+        
+        <div class="profile-section" onclick="window.location.href='Profilesview'">
+            <div class="profile-icon">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <!-- header with hand icons -->
+    <div class="page-header">
+        <h2>Share Your Voice</h2>
+        <div class="hand-icons">
+            <span>🤟</span>
+            <span>✌️</span>
+            <span>👋</span>
+        </div>
+    </div>
+
+    <!-- back button -->
+    <div class="back-link">
+        <a href="/viewfeedback" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back</a>
+    </div>
+
+    <!-- feedback form card (star rating + textarea) -->
+    <div class="form-card">
+        <h3>
+            <span>🖐️</span> Your Feedback Matters <span>🤟</span>
+        </h3>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- star rating -->
+            <span class="rating-label">rating</span>
+            <div class="stars">
+                <input type="radio" name="Rating" id="star5" value="5">
+                <label for="star5">★</label>
+                <input type="radio" name="Rating" id="star4" value="4">
+                <label for="star4">★</label>
+                <input type="radio" name="Rating" id="star3" value="3">
+                <label for="star3">★</label>
+                <input type="radio" name="Rating" id="star2" value="2">
+                <label for="star2">★</label>
+                <input type="radio" name="Rating" id="star1" value="1" required>
+                <label for="star1">★</label>
+            </div>
+
+            <!-- feedback textarea -->
+            <div class="feedback-field">
+                <label for="feedback">feedback</label>
+                <textarea required name="Feedback" id="feedback" placeholder="Enter your feedback here..." class="div2"></textarea>
+            </div>
+
+            <!-- submit button -->
+            <button type="submit" class="btn-submit">
+                <i class="fa-regular fa-paper-plane"></i> Submit <span style="font-size:1.2rem;">🖐️</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- decorative hand note -->
+    <div class="hand-note">
+        <span>🖐️</span> <span>🤟</span> <span>👌</span> <span>✌️</span> <span>🤙</span>
+        <span style="margin-left: 6px;">— we're listening</span>
+    </div>
+</div>
+
+<!-- FOOTER with Quick Links, Contact, Connect (cool themed) -->
+<footer class="site-footer">
+    <div class="footer-content">
+        <!-- Quick Links Section -->
+        <div class="footer-section">
+            <h3><i class="fa-solid fa-link"></i> Quick Links</h3>
+            <ul class="footer-links">
+                <li><a href="/userhomepage"><i class="fa-solid fa-chevron-right"></i> Home</a></li>
+                <li><a href="/isl_page"><i class="fa-solid fa-chevron-right"></i> ISL Conversion</a></li>
+                <li><a href="/StartSignAnimationView"><i class="fa-solid fa-chevron-right"></i> Reverse Sign Conversion</a></li>
+                <li><a href="/signs"><i class="fa-solid fa-chevron-right"></i> Learn Signs</a></li>
+                <li style="color: #20b2aa;"><a><i class="fa-solid fa-chevron-right"></i> Feedback</a></li>
+                <li><a href="/Profilesview"><i class="fa-solid fa-chevron-right"></i> Profile</a></li>
+            </ul>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="footer-section">
+            <h3><i class="fa-solid fa-address-book"></i> Contact</h3>
+            <div class="contact-item">
+                <i class="fa-solid fa-phone"></i>
+                <span>+91 96575 40987</span>
+            </div>
+            <div class="contact-item">
+                <i class="fa-solid fa-envelope"></i>
+                <span>devs@signbridge.cool</span>
+            </div>
+            <div class="contact-item">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Coastal Hub, Wave Street</span>
+            </div>
+        </div>
+
+        <!-- Connect Section -->
+        <div class="footer-section">
+            <h3><i class="fa-regular fa-compass"></i> Connect Us</h3>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <a style="color: #40e0d0; font-size: 1.5rem;"><i class="fa-brands fa-facebook"></i></a>
+                <a style="color: #40e0d0; font-size: 1.5rem;"><i class="fa-brands fa-twitter"></i></a>
+                <a style="color: #40e0d0; font-size: 1.5rem;"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 SignBridge · All rights reserved</p>
+    </div>
+</footer>
+
+<!-- <script>
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+    }, 350);
+});
+</script> -->
+</body>
+</html>

@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home · SignBridge</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts Inter + Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            background: linear-gradient(145deg, #0b1f2a 0%, #1c3a4a 100%);
+            min-height: 100vh;
+            color: #e2f0f5;
+            line-height: 1.5;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* cool abstract overlays (matching admin dashboard) */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 200, 0.06) 0%, transparent 35%),
+                radial-gradient(circle at 90% 70%, rgba(100, 255, 220, 0.05) 0%, transparent 45%),
+                repeating-linear-gradient(45deg, rgba(64, 224, 208, 0.02) 0px, rgba(64, 224, 208, 0.02) 2px, transparent 2px, transparent 25px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* floating geometric shapes (cool hand silhouette) */
+        body::after {
+            content: "";
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 500px;
+            height: 500px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.15"><path fill="%2340e0d0" d="M140,40 L180,100 L140,160 L60,160 L20,100 L60,40 Z" /><circle cx="100" cy="100" r="25" fill="%2320b0aa" opacity="0.6"/></svg>');
+            background-size: 400px 400px;
+            background-repeat: repeat;
+            background-position: bottom right;
+            filter: drop-shadow(0 0 4px #20b2aa);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== LOADING ANIMATION OVERLAY (cool themed) ===== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #0b1f2a, #1c3a4a);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-container {
+            text-align: center;
+            animation: float 2.5s ease-in-out infinite;
+        }
+
+        .loader-logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #20b2aa, #40e0d0);
+            color: #022028;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 0 auto 1.8rem;
+            box-shadow: 
+                0 15px 30px rgba(0,0,0,0.5),
+                0 0 0 2px #40e0d0 inset,
+                0 0 30px #20b2aa;
+            border: 1px solid #a0f0e8;
+            animation: pulse-glow 1.8s ease-in-out infinite;
+        }
+
+        .loader-text {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #80f0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+            margin-bottom: 1.2rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .loader-dots {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            background: #40e0d0;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+            box-shadow: 0 0 10px #20b2aa;
+        }
+
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow:
+                    0 15px 30px rgba(0,0,0,0.5),
+                    0 0 0 2px #40e0d0 inset,
+                    0 0 30px #20b2aa;
+            }
+            50% {
+                box-shadow:
+                    0 20px 40px rgba(0,0,0,0.6),
+                    0 0 0 3px #80f0e0 inset,
+                    0 0 50px #40e0d0;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0.6);
+                opacity: 0.6;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ===== TOP MENU BAR (cool teal / mint) ===== */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #0f2a33f0;
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 6px 24px rgba(0, 30, 30, 0.8), 0 0 0 1px #40e0d040;
+            border-bottom: 1px solid #40e0d0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand .logo-mark {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #20b2aa, #40e0d0);
+            color: #022028;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            box-shadow: 0 4px 8px #20b2aa30;
+            border: 1px solid #a0f0e8;
+        }
+
+        .brand span {
+            font-weight: 700;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, #e0fff8, #40e0d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+            text-shadow: 0 2px 3px #20b2aa30;
+        }
+
+        .right-section {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #b0e8e0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+            background: #1c4e5a;
+            border-color: #40e0d0;
+            box-shadow: 0 0 6px #40e0d030;
+        }
+
+        .nav-links a i {
+            font-size: 1rem;
+            color: #40e0d0;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #0b333d;
+            border-radius: 40px;
+            border: 1px solid #40e0d080;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .profile-section:hover {
+            background: #1d5a66;
+            border-color: #40e0d0;
+            color: #ffffff;
+        }
+
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .profile-name {
+            color: #e0f8f0;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* ===== MAIN CONTENT AREA ===== */
+        .main-content {
+            margin-top: 90px;
+            padding: 2rem 2.5rem 1rem;
+            position: relative;
+            z-index: 10;
+            max-width: 1300px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* welcome section with glass + cool tones */
+        .welcome-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(20, 60, 65, 0.6);
+            backdrop-filter: blur(12px);
+            padding: 1.5rem 2rem;
+            border-radius: 60px;
+            margin-bottom: 2.5rem;
+            border: 1px solid #40e0d060;
+            box-shadow: 0 20px 40px -12px #00181e, 0 0 0 1px #40e0d020 inset;
+        }
+
+        .welcome-text h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #ffffff, #80f0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.3rem;
+        }
+
+        .welcome-text p {
+            color: #b0e0e0;
+            max-width: 600px;
+            font-size: 1rem;
+        }
+
+        .hand-images {
+            display: flex;
+            gap: 1.2rem;
+            font-size: 2.2rem;
+            filter: drop-shadow(0 8px 10px #20b2aa40);
+            background: rgba(30, 80, 85, 0.5);
+            padding: 0.6rem 2rem;
+            border-radius: 100px;
+            border: 1px solid #40e0d0;
+            backdrop-filter: blur(4px);
+        }
+
+        .hand-images span {
+            transition: transform 0.2s;
+            cursor: default;
+        }
+
+        .hand-images span:hover {
+            transform: scale(1.15) rotate(5deg);
+            filter: drop-shadow(0 0 4px #40e0d0);
+        }
+
+        /* cards section */
+        .cards-title {
+            color: #80e8e0;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .cards-title i {
+            color: #40e0d0;
+            font-size: 2rem;
+            filter: drop-shadow(0 0 3px #20b2aa40);
+        }
+
+        .cards {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+
+        /* Base card style (for Explore section - unchanged) */
+        .card {
+            background: linear-gradient(145deg, #1d4650, #0e3038);
+            width: 260px;
+            padding: 1.8rem 1.5rem;
+            border-radius: 32px;
+            box-shadow: 0 18px 35px -12px #00181e, 0 0 0 1px #40e0d040;
+            border: 1px solid #20b2aa;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            color: #e0f0f0;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(64, 224, 208, 0.1), transparent 60%);
+            pointer-events: none;
+        }
+
+        .card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 30px 45px -15px #00181e, 0 0 0 2px #40e0d0;
+            border-color: #80f0e0;
+            background: #235b66;
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            background: #154851;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            color: #40e0d0;
+            border: 1px solid #20b2aa;
+            box-shadow: 0 8px 0 #08222b;
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #a0f0e8;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: #b0d8d8;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .card-hand {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 2.5rem;
+            opacity: 0.15;
+            transition: opacity 0.3s, transform 0.2s;
+            pointer-events: none;
+            filter: drop-shadow(0 0 2px #40e0d0);
+        }
+
+        .card:hover .card-hand {
+            opacity: 0.3;
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        /* ===== REDESIGNED KEY FEATURES CARDS (more attractive) ===== */
+        .feature-card {
+            background: linear-gradient(145deg, #1a4d5a, #0c3842);
+            width: 260px;
+            padding: 1.8rem 1.5rem 2rem;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px -10px #00181e, 0 0 0 1px #40e0d0, 0 0 20px rgba(64, 224, 208, 0.3);
+            border: 1px solid #80f0e0;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #f0ffff;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+        }
+
+        .feature-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 20%, rgba(128, 240, 224, 0.25), transparent 70%);
+            pointer-events: none;
+        }
+
+        .feature-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #40e0d0, #80f0e0, #40e0d0);
+            border-radius: 32px 32px 0 0;
+        }
+
+        /* .feature-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 30px 50px -15px #000000, 0 0 0 2px #80f0e0, 0 0 30px #40e0d0;
+            border-color: #a0f8f0;
+            background: linear-gradient(145deg, #23606e, #124a55);
+        } */
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #20b2aa, #40e0d0);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            color: #022028;
+            border: 1px solid #a0f8f0;
+            box-shadow: 0 8px 0 #0a2a30, 0 0 15px #40e0d0;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotate(5deg) scale(1.1);
+            box-shadow: 0 8px 0 #0a2a30, 0 0 25px #80f0e0;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #ffffff, #b0fff0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-card p {
+            color: #d0f8f0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .feature-hand {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 2.8rem;
+            opacity: 0.2;
+            transition: opacity 0.4s, transform 0.3s;
+            pointer-events: none;
+            filter: drop-shadow(0 0 8px #40e0d0);
+            transform: rotate(5deg);
+        }
+
+        .feature-card:hover .feature-hand {
+            opacity: 0.4;
+            transform: rotate(10deg) scale(1.2);
+        }
+
+        /* ===== IMPROVED PREMIUM STATS SECTION ===== */
+        .stats-section {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 3rem 0 2rem;
+        }
+
+        .stat-card {
+            flex: 1 1 220px;
+            max-width: 280px;
+            background: linear-gradient(145deg, #154851, #0b333d);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            padding: 2.2rem 1.5rem 2rem;
+            text-align: center;
+            border: 1px solid rgba(64, 224, 208, 0.4);
+            box-shadow: 
+                0 20px 35px -15px #00181e,
+                0 0 0 1px rgba(64, 224, 208, 0.2) inset,
+                0 0 30px rgba(64, 224, 208, 0.15);
+            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 20%, rgba(64, 224, 208, 0.2), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #40e0d0, #80f0e0, #40e0d0, transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        /* .stat-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 
+                0 30px 45px -15px #000000,
+                0 0 0 2px #80f0e0,
+                0 0 40px #40e0d0;
+            border-color: #a0f8f0;
+            background: linear-gradient(145deg, #1a5563, #0f404a);
+        } */
+
+        .stat-card:hover::after {
+            transform: translateX(100%);
+        }
+
+        .stat-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, #20b2aa, #40e0d0);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #022028;
+            border: 1px solid #a0f8f0;
+            box-shadow: 0 8px 0 #0a2a30, 0 0 20px #40e0d0;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.05) rotate(3deg);
+            box-shadow: 0 8px 0 #0a2a30, 0 0 30px #80f0e0;
+        }
+
+        .stat-card h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #a0f8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.2;
+            letter-spacing: -1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-card p {
+            font-size: 1rem;
+            color: #c0f0f0;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* sign gallery - cool glass panel */
+        .sign-gallery {
+            margin-top: 3rem;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(20, 60, 65, 0.5);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 1.8rem 2rem;
+            border: 1px solid #40e0d060;
+            box-shadow: 0 10px 30px -10px #00181e;
+        }
+
+        .gallery-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #80e8e0;
+            font-size: 0rem;
+            background: rgba(10, 45, 50, 0.7);
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            border: 1px solid #20b2aa;
+            transition: all 0.2s ease;
+        }
+
+        .gallery-item:hover {
+            background: #1c5e68;
+            border-color: #80f0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(64, 224, 208, 0.3);
+        }
+
+        .gallery-item span {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 2px 3px #20b2aa60);
+        }
+
+        .gallery-item p {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #d0f0f0;
+        }
+
+        /* tiny footnote */
+        .footnote {
+            text-align: center;
+            margin: 2.5rem 0 1rem;
+            color: #b0e0e0;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            border-top: 1px dashed #40e0d040;
+            padding-top: 1.5rem;
+        }
+        .footnote span {
+            font-size: 1rem;
+            filter: drop-shadow(0 0 2px #40e0d0);
+        }
+
+        /* ===== FOOTER SECTION (cool teal/mint) ===== */
+        .site-footer {
+            background: #0b2d33;
+            backdrop-filter: blur(12px);
+            border-top: 2px solid #20b2aa;
+            padding: 2.5rem 2rem 2rem;
+            margin-top: 3rem;
+            color: #c0f0e8;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            box-shadow: 0 -10px 30px -5px #00181e;
+        }
+
+        .footer-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2.5rem;
+        }
+
+        .footer-section {
+            flex: 1 1 200px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            color: #80f0e0;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid #20b2aa;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-section h3 i {
+            color: #40e0d0;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.7rem;
+        }
+
+        .footer-links a {
+            color: #b0e0e0;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+            padding-left: 5px;
+        }
+
+        .footer-links a i {
+            color: #20b2aa;
+            font-size: 0.8rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            color: #b0e0e0;
+        }
+
+        .contact-item i {
+            color: #40e0d0;
+            width: 20px;
+            font-size: 1rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #20b2aa60;
+            color: #a0c8c8;
+            font-size: 0.9rem;
+        }
+
+        /* ===== CUSTOM LOGOUT MODAL (cool themed) ===== */
+        .logout-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 20, 25, 0.65);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .logout-modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .logout-box {
+            background: linear-gradient(145deg, #123c44, #0b2d33);
+            padding: 2rem 2.5rem;
+            border-radius: 35px;
+            text-align: center;
+            width: 340px;
+            border: 1px solid #40e0d0;
+            box-shadow: 0 20px 40px #00181e;
+            color: #e0f8f5;
+        }
+
+        .logout-box h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, #ffffff, #80f0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logout-box p {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            color: #b0e8e0;
+        }
+
+        .logout-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .cancel-btn,
+        .confirm-btn {
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .cancel-btn {
+            background: #154851;
+            color: #80f0e0;
+            border: 1px solid #20b2aa;
+        }
+
+        .cancel-btn:hover {
+            background: #1c5e68;
+        }
+
+        .confirm-btn {
+            background: #20b2aa;
+            color: #022028;
+        }
+
+        .confirm-btn:hover {
+            background: #40e0d0;
+        }
+
+        /* responsive tweaks */
+        @media (max-width: 800px) {
+            .welcome-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            .top-bar {
+                padding: 0.8rem 1rem;
+                flex-wrap: wrap;
+            }
+            .right-section {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+            .nav-links {
+                gap: 1rem;
+            }
+            .main-content {
+                padding: 1.5rem;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            .stats-section {
+                gap: 20px;
+            }
+            .stat-card {
+                flex: 1 1 180px;
+                min-width: 200px;
+            }
+        }
+        @media (max-width: 550px) {
+            .brand span {
+                font-size: 1.1rem;
+            }
+            .nav-links a span {
+                display: none;
+            }
+            .nav-links a i {
+                font-size: 1.3rem;
+            }
+            .profile-name {
+                display: none;
+            }
+            .stat-card h2 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOADING ANIMATION OVERLAY (cool themed) -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loader-container">
+        <div class="loader-logo">⌘</div>
+        <div class="loader-text">SignBridge</div>
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOP MENU BAR (cool teal / mint) with profile section -->
+<div class="top-bar">
+    <div class="brand">
+        <div class="logo-mark">⌘</div>
+        <span>SignBridge · Dashboard</span>
+    </div>
+    <div class="right-section">
+        <div class="nav-links">
+        <a style="cursor: default; color: #ffffff; background: #192f35; border-color: #40e0d0;">
+            <i class="fa-solid fa-house"></i><span>Home</span>
+        </a>
+        <a href="/viewfeedback"><i class="fa-solid fa-comment"></i> <span>Feedback</span></a>
+        <a href="/viewcomplaints"><i class="fa-solid fa-flag"></i><span>Report</span></a>
+        <a href="/" id="logoutLink" class="logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> <span>Log out</span>
+        </a>
+    </div>
+        <div class="profile-section" onclick="window.location.href='Profilesview'">
+            <div class="profile-icon">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <!-- WELCOME SECTION -->
+    <div class="welcome-header">
+        <div class="welcome-text">
+            <h1>{{ greeting }}, {{ user.Name|title }}!</h1>
+            <p><b>SingnBridge</b> - Bridging gaps between Voices & Hands ...</p>
+        </div>
+        <div class="hand-images">
+            <span>🤟</span>
+            <span>✌️</span>
+            <span>👋</span>
+            <span>🤙</span>
+            <span>🖖</span>
+        </div>
+    </div>
+
+    <!-- CARDS SECTION -->
+
+    <!-- Explore (unchanged) -->
+    <div class="cards-title">
+        <i class="fa-solid fa-compass"></i>Explore
+    </div>
+    <div class="cards">
+        <a href="/isl_page" class="card">
+            <div class="card-icon"><i class="fa-solid fa-camera"></i></div>
+            <h3>Sign Language Conversion</h3>
+            <p>Translate Sign Language gestures into Text & Audio</p>
+            <span class="card-hand">🖐️</span>
+        </a>
+        <a href="/StartSignAnimationView" class="card">
+            <div class="card-icon"><i class="fa-solid fa-hands"></i></div>
+            <h3>Reverse Sign Conversion</h3>
+            <p>Generate Sign Language gestures using Text / Audio</p>
+            <span class="card-hand">🤟</span>
+        </a>
+        <a href="/signs" class="card">
+            <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
+            <h3>Learn Signs</h3>
+            <p>Understand & learn Sign Language Gestures</p>
+            <span class="card-hand">👐</span>
+        </a>
+    </div>
+    <br><br><br>
+    
+    <!-- Features (REDESIGNED with feature-card class) -->
+    <div class="cards-title">
+        <i class="fa-solid fa-lightbulb"></i>Key Features
+    </div>
+    <div class="cards">
+        <div class="feature-card" style="cursor: default;">
+            <div class="feature-icon"><i class="fa-solid fa-hand-peace"></i></div>
+            <h3>Indian Signs (Exclusive)</h3>
+            <p>Converts hand gestures and movements used in Indian Sign Language (ISL) to communicate...</p>
+            <span class="feature-hand">✌️</span>
+        </div>
+        <div class="feature-card" style="cursor: default;">
+            <div class="feature-icon"><i class="fa-solid fa-camera"></i></div>
+            <h3>Sign Language to Text & Audio Conversion</h3>
+            <p>Identify hand signs using image or live input and converts them into Text / Audio</p>
+            <span class="feature-hand">🖐️</span>
+        </div>
+        <div class="feature-card" style="cursor: default;">
+            <div class="feature-icon"><i class="fas fa-align-left"></i></div>
+            <h3>Text / Audio to Sign Language Gestures</h3>
+            <p>Identify  Text / Audio and converts it into Sign Gestures</p>
+            <span class="feature-hand">🤟</span>
+        </div>
+        <div class="feature-card" style="cursor: default;">
+            <div class="feature-icon"><i class="fa-solid fa-book-open"></i></div>
+            <h3>Learn Signs</h3>
+            <p>Practice the alphabets with interactive hand signs from anywhere.</p>
+            <span class="feature-hand">👐</span>
+        </div>
+    </div>
+<br><br>
+    <!-- PREMIUM STATS SECTION - IMPROVED STYLING -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <h2 class="counter" data-target="500" data-suffix="+">0</h2>
+            <p>Registered Users</p>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
+            <h2 class="counter" data-target="96" data-suffix="%">0%</h2>
+            <p>Recognition Accuracy</p>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-user-clock"></i></div>
+            <h2 class="counter" data-target="250" data-suffix="+">0</h2>
+            <p>Active Users</p>
+        </div>
+    </div>
+
+    <!-- SIGN GALLERY -->
+    <div class="sign-gallery">
+        <div class="gallery-item">
+            <span>🖐️</span>
+            <p>Hello / wave</p>
+        </div>
+        <div class="gallery-item">
+            <span>🤟</span>
+            <p>I love you</p>
+        </div>
+        <div class="gallery-item">
+            <span>👌</span>
+            <p>OK / perfect</p>
+        </div>
+        <div class="gallery-item">
+            <span>✌️</span>
+            <p>Peace / victory</p>
+        </div>
+        <div class="gallery-item">
+            <span>🤙</span>
+            <p>Call me</p>
+        </div>
+    </div>
+
+    <!-- footnote -->
+    <div class="footnote">
+        <span>🤟 ✌️ 👋 🖐️ 🤙 🫲</span> — every gesture tells a story
+    </div>
+</div>
+
+<!-- FOOTER with Quick Links, Contact, Connect -->
+<footer class="site-footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3><i class="fa-solid fa-link"></i> Quick Links</h3>
+            <ul class="footer-links">
+                <li style="color: #20b2aa;"><i class="fa-solid fa-chevron-right"></i> Home</li>
+                <li><a href="/isl_page"><i class="fa-solid fa-chevron-right"></i> ISL Conversion</a></li>
+                <li><a href="/StartSignAnimationView"><i class="fa-solid fa-chevron-right"></i> Reverse Sign Conversion</a></li>
+                <li><a href="/signs"><i class="fa-solid fa-chevron-right"></i> Learn Signs</a></li>
+                <li><a href="/viewfeedback"><i class="fa-solid fa-chevron-right"></i> Feedback</a></li>
+                <li><a href="/viewcomplaints"><i class="fa-solid fa-chevron-right"></i> Report</a></li>
+                <li><a href="/Profilesview"><i class="fa-solid fa-chevron-right"></i> Profile</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3><i class="fa-solid fa-address-book"></i> Contact</h3>
+            <div class="contact-item">
+                <i class="fa-solid fa-phone"></i>
+                <span>+91 96575 40987</span>
+            </div>
+            <div class="contact-item">
+                <i class="fa-solid fa-envelope"></i>
+                <span>devs@signbridge.cool</span>
+            </div>
+            <div class="contact-item">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Coastal Hub, Wave Street</span>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h3><i class="fa-regular fa-compass"></i> Connect Us</h3>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <a style="color: #40e0d0; font-size: 1.5rem;"><i class="fa-brands fa-facebook"></i></a>
+                <a style="color: #40e0d0; font-size: 1.5rem;"><i class="fa-brands fa-twitter"></i></a>
+                <a style="color: #40e0d0; font-size: 1.5rem;"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 SignBridge · All rights reserved</p>
+    </div>
+</footer>
+
+<!-- CUSTOM LOGOUT MODAL (cool themed) -->
+<div class="logout-modal" id="logoutModal">
+    <div class="logout-box">
+        <h3>Confirm Logout</h3>
+        <p>Are you sure you want to Log out?</p>
+        <div class="logout-actions">
+            <button class="cancel-btn" id="cancelLogout">Cancel</button>
+            <button class="confirm-btn" id="confirmLogout">Log Out</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }, 350);
+    });
+
+    const logoutLink = document.getElementById("logoutLink");
+    const logoutModal = document.getElementById("logoutModal");
+    const cancelBtn = document.getElementById("cancelLogout");
+    const confirmBtn = document.getElementById("confirmLogout");
+
+    logoutLink.addEventListener("click", function(e) {
+        e.preventDefault();
+        logoutModal.classList.add("active");
+    });
+
+    cancelBtn.addEventListener("click", function() {
+        logoutModal.classList.remove("active");
+    });
+
+    confirmBtn.addEventListener("click", function() {
+        window.location.href = "/";
+    });
+
+    logoutModal.addEventListener("click", function(e) {
+        if (e.target === logoutModal) {
+            logoutModal.classList.remove("active");
+        }
+    });
+
+    // Premium Counter Animation with Suffix Support
+    const counters = document.querySelectorAll('.counter');
+    counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const suffix = counter.getAttribute('data-suffix') || "";
+        let count = 0;
+        const increment = target / 80;
+
+        const updateCounter = () => {
+            if (count < target) {
+                count += increment;
+                counter.innerText = Math.ceil(count) + suffix;
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.innerText = target + suffix;
+            }
+        };
+        updateCounter();
+    });
+</script>
+
+</body>
+</html>

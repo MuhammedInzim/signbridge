@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignBridge · Register</title>
+    <!-- Font Awesome 6 (free) for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts Inter + Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            background: linear-gradient(145deg, #0b1f2a 0%, #1c3a4a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            line-height: 1.4;
+            color: #e2f0f5;
+        }
+
+        /* cool abstract overlays (matching admin dashboard) */
+        body::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 200, 0.06) 0%, transparent 35%),
+                radial-gradient(circle at 90% 70%, rgba(100, 255, 220, 0.05) 0%, transparent 45%),
+                repeating-linear-gradient(45deg, rgba(64, 224, 208, 0.02) 0px, rgba(64, 224, 208, 0.02) 2px, transparent 2px, transparent 25px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* floating geometric shapes (cool hand silhouette) */
+        body::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 380px;
+            height: 380px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.1"><path fill="%2340e0d0" d="M100,30 L120,80 L180,80 L130,115 L150,175 L100,140 L50,175 L70,115 L20,80 L80,80 Z"/></svg>');
+            background-size: 300px 300px;
+            background-repeat: no-repeat;
+            background-position: bottom right;
+            filter: drop-shadow(0 0 4px #20b2aa);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* main card – cool glass morphism (matching admin cards) */
+        .register-card {
+            max-width: 520px;
+            width: 100%;
+            background: rgba(20, 60, 65, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 2rem 2.2rem 2.2rem;
+            box-shadow: 
+                0 20px 40px -16px rgba(0, 20, 20, 0.8),
+                0 8px 16px -8px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(64, 224, 208, 0.3);
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+            border: 1px solid #40e0d060;
+        }
+
+        .register-card:hover {
+            box-shadow: 0 30px 50px -20px #00181e, 0 6px 12px -6px #000000;
+            border-color: #40e0d0a0;
+        }
+
+        /* brand – cool teal/mint gradient */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.2rem;
+        }
+
+        .logo-mark {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #20b2aa, #40e0d0);
+            color: #022028;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            box-shadow: 0 4px 8px #20b2aa30;
+            border: 1px solid #a0f0e8;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, #e0fff8, #40e0d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+            text-shadow: 0 2px 3px #20b2aa30;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ffffff, #80f0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.2rem;
+        }
+
+        .greeting {
+            font-size: 0.9rem;
+            color: #b0e0e0;
+            margin-bottom: 1.2rem;
+            border-left: 3px solid #40e0d0;
+            padding-left: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0 20px 20px 0;
+            line-height: 1.4;
+            backdrop-filter: blur(2px);
+        }
+
+        /* ===== FORM ROWS – TIGHT ALIGNMENT ===== */
+        .form-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+            gap: 10px;
+        }
+
+        .form-row .field-label {
+            width: 80px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: #80e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding-top: 0.7rem;
+            flex-shrink: 0;
+            line-height: 1.2;
+        }
+
+        .field-wrapper {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* input wrapper */
+        .input-field {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            font-size: 0.9rem;
+            color: #40e0d0;
+            z-index: 1;
+            opacity: 0.9;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border: 1.5px solid rgba(64, 224, 208, 0.4);
+            border-radius: 40px;
+            font-size: 0.85rem;
+            background: rgba(10, 45, 50, 0.7);
+            color: #e0f0f0;
+            transition: all 0.15s ease;
+            backdrop-filter: blur(4px);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: #40e0d0;
+            background: rgba(20, 60, 65, 0.8);
+            box-shadow: 0 0 0 3px rgba(64, 224, 208, 0.2), inset 0 1px 4px #000000;
+        }
+
+        .input-field input::placeholder {
+            color: #80b0b0;
+            opacity: 0.6;
+        }
+
+        /* radio group – compact */
+        .radio-group {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            flex-wrap: wrap;
+            background: rgba(10, 45, 50, 0.7);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            border: 1.5px solid rgba(64, 224, 208, 0.4);
+            min-height: 2.4rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin-right: 0.1rem;
+            accent-color: #40e0d0;
+            transform: scale(0.85);
+        }
+
+        .radio-group label {
+            font-size: 0.8rem;
+            color: #b0e0e0;
+            margin-right: 0.4rem;
+            text-transform: none;
+            font-weight: 400;
+        }
+
+        /* toggle password button – cool themed */
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            border-radius: 50%;
+            color: #40e0d0;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+
+        .toggle-password:hover {
+            color: #80f0e0;
+            transform: scale(1.1);
+        }
+
+        .eye-icon {
+            width: 20px;
+            height: 20px;
+            color: #40e0d0;
+        }
+
+        /* error message */
+        .error {
+            color: #ffa07a;  /* kept warm for contrast, but can be adjusted */
+            font-size: 0.65rem;
+            margin-top: 0.2rem;
+            padding-left: 0.5rem;
+            min-height: 1rem;
+            line-height: 1.1;
+        }
+
+        /* register button - cool gradient */
+        .register-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #154851, #1d6675);
+            border: none;
+            padding: 0.75rem;
+            border-radius: 40px;
+            color: #e0f0f0;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 18px -10px #00181e, 0 1px 2px #40e0d040 inset;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #40e0d080;
+            margin-top: 1rem;
+        }
+
+        .register-btn:hover {
+            background: linear-gradient(135deg, #1d6675, #248a9c);
+            box-shadow: 0 12px 22px -12px #000000, 0 1px 2px #80f0e060 inset;
+            color: white;
+            border-color: #80f0e0;
+        }
+
+        .register-btn:active {
+            transform: scale(0.98);
+        }
+
+        .register-btn span {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* login link */
+        .login-link {
+            text-align: center;
+            margin-top: 1.2rem;
+            color: #b0e0e0;
+            font-size: 0.85rem;
+        }
+
+        .login-link a {
+            color: #80f0e0;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 0.3rem;
+            border-bottom: 1.5px solid transparent;
+            transition: border-color 0.15s;
+        }
+
+        .login-link a:hover {
+            border-bottom-color: #80f0e0;
+            color: #ffffff;
+        }
+
+        /* subtle hand pattern (cool themed) */
+        .register-card::after {
+            content: "🤟 ✌️ 👋 🖐️ 🤙";
+            position: absolute;
+            bottom: 12px;
+            right: 20px;
+            font-size: 1.8rem;
+            opacity: 0.03;
+            letter-spacing: 6px;
+            pointer-events: none;
+            z-index: -1;
+            white-space: nowrap;
+            transform: rotate(-3deg);
+            color: #40e0d0;
+            filter: drop-shadow(0 0 2px #20b2aa);
+        }
+
+        /* ===== LOADING ANIMATION OVERLAY (cool themed) ===== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #0b1f2a, #1c3a4a);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-container {
+            text-align: center;
+            animation: float 2.5s ease-in-out infinite;
+        }
+
+        .loader-logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #20b2aa, #40e0d0);
+            color: #022028;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 0 auto 1.8rem;
+            box-shadow: 
+                0 15px 30px rgba(0,0,0,0.5),
+                0 0 0 2px #40e0d0 inset,
+                0 0 30px #20b2aa;
+            border: 1px solid #a0f0e8;
+            animation: pulse-glow 1.8s ease-in-out infinite;
+        }
+
+        .loader-text {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #80f0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+            margin-bottom: 1.2rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .loader-dots {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            background: #40e0d0;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+            box-shadow: 0 0 10px #20b2aa;
+        }
+
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        /* ===== Animations ===== */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow:
+                    0 15px 30px rgba(0,0,0,0.5),
+                    0 0 0 2px #40e0d0 inset,
+                    0 0 30px #20b2aa;
+            }
+            50% {
+                box-shadow:
+                    0 20px 40px rgba(0,0,0,0.6),
+                    0 0 0 3px #80f0e0 inset,
+                    0 0 50px #40e0d0;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0.6);
+                opacity: 0.6;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .register-card { padding: 1.5rem; }
+            .form-row { flex-wrap: wrap; gap: 4px; }
+            .form-row .field-label { width: 100%; padding-top: 0; }
+            h1 { font-size: 1.6rem; }
+            .loader-logo { width: 90px; height: 90px; font-size: 3rem; }
+            .loader-text { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOADING ANIMATION OVERLAY (cool themed) -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader-container">
+            <div class="loader-logo">⌘</div>
+            <div class="loader-text">SignBridge</div>
+            <div class="loader-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGISTER CARD – cool aesthetic with minimal sign language details -->
+    <div class="register-card">
+        <!-- brand strip -->
+        <div class="brand">
+            <div class="logo-mark">⌘</div>
+            <div class="logo-text">SignBridge</div>
+        </div>
+
+        <h1>Create Account</h1>
+        <div class="greeting">Join our community — your hands carry meaning</div>
+
+        <form method="post" onsubmit="return validateForm()">
+            {% csrf_token %}
+
+            <!-- Name -->
+            <div class="form-row">
+                <div class="field-label"><label for="name">Name</label></div>
+                <div class="field-wrapper">
+                    <div class="input-field">
+                        <span class="input-icon"><i class="fa-regular fa-user"></i></span>
+                        <input type="text" required name="Name" id="name" placeholder="Enter your name">
+                    </div>
+                    <div class="error" id="nameError"></div>
+                </div>
+            </div>
+
+            <!-- Age -->
+            <div class="form-row">
+                <div class="field-label"><label for="age">Age</label></div>
+                <div class="field-wrapper">
+                    <div class="input-field">
+                        <span class="input-icon"><i class="fa-regular fa-calendar"></i></span>
+                        <input type="number" name="Age" id="age" placeholder="Years" required>
+                    </div>
+                    <div class="error" id="ageError"></div>
+                </div>
+            </div>
+
+            <!-- Gender -->
+            <div class="form-row">
+                <div class="field-label">Gender</div>
+                <div class="field-wrapper">
+                    <div class="radio-group">
+                        <input type="radio" name="Gender" id="male" value="Male" required>
+                        <label for="male">Male</label>
+                        <input type="radio" name="Gender" id="female" value="Female">
+                        <label for="female">Female</label>
+                        <input type="radio" name="Gender" id="others" value="Others">
+                        <label for="others">Others</label>
+                    </div>
+                    <div class="error" id="genderError"></div>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-row">
+                <div class="field-label"><label for="email">Email</label></div>
+                <div class="field-wrapper">
+                    <div class="input-field">
+                        <span class="input-icon"><i class="fa-regular fa-envelope"></i></span>
+                        <input type="email" name="Email" id="email" placeholder="example@gmail.com" required>
+                    </div>
+                    <div class="error" id="emailError"></div>
+                </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="form-row">
+                <div class="field-label"><label for="phone">Phone</label></div>
+                <div class="field-wrapper">
+                    <div class="input-field">
+                        <span class="input-icon"><i class="fa-solid fa-phone"></i></span>
+                        <input type="text" name="Phone_no" id="phone" maxlength="10" placeholder="Enter your Phone No">
+                    </div>
+                    <div class="error" id="phoneError"></div>
+                </div>
+            </div>
+
+            <!-- Place -->
+            <div class="form-row">
+                <div class="field-label"><label for="place">Place</label></div>
+                <div class="field-wrapper">
+                    <div class="input-field">
+                        <span class="input-icon"><i class="fa-solid fa-location-dot"></i></span>
+                        <input type="text" name="Place" id="place" placeholder="City / Town">
+                    </div>
+                    <div class="error" id="placeError"></div>
+                </div>
+            </div>
+
+            <!-- Password with eye toggle (cool themed) -->
+            <div class="form-row">
+                <div class="field-label"><label for="password">Password</label></div>
+                <div class="field-wrapper">
+                    <div class="input-field">
+                        <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" name="password" id="password" placeholder="········">
+                        <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password">
+                            <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                    <div class="error" id="passwordError"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="register-btn" id="submitBtn">
+                <span>⌘</span> Register <span style="font-size:1rem;">🤟</span>
+            </button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="/">Log in</a>
+        </div>
+    </div>
+
+    <!-- loading overlay hide script -->
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 350);
+        });
+
+        // Password toggle with eye icon
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        
+        if (togglePassword && passwordInput && eyeIcon) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                eyeIcon.classList.toggle('fa-eye');
+                eyeIcon.classList.toggle('fa-eye-slash');
+            });
+        }
+
+        // Validation (exactly as provided, kept intact)
+        window.validateForm = function() {
+            let valid = true;
+            document.querySelectorAll(".error").forEach(el => el.innerHTML = "");
+
+            const name = document.getElementById("name").value.trim();
+            const age = document.getElementById("age").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const place = document.getElementById("place").value.trim();
+            const password = document.getElementById("password").value;
+
+            const genderRadios = document.getElementsByName("Gender");
+            let genderSelected = false;
+            for (let radio of genderRadios) if (radio.checked) { genderSelected = true; break; }
+
+            if (name.length < 3) {
+                document.getElementById("nameError").innerHTML = "At least 3 characters";
+                valid = false;
+            }
+            if (age === "") {
+                document.getElementById("ageError").innerHTML = "Required";
+                valid = false;
+            } else {
+                const ageNum = Number(age);
+                if (isNaN(ageNum) || !Number.isInteger(ageNum) || ageNum < 1 || ageNum > 120) {
+                    document.getElementById("ageError").innerHTML = "Valid age 1–120";
+                    valid = false;
+                }
+            }
+            if (!genderSelected) {
+                document.getElementById("genderError").innerHTML = "Select gender";
+                valid = false;
+            }
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                document.getElementById("emailError").innerHTML = "Valid email required";
+                valid = false;
+            }
+            const phonePattern = /^[6-9][0-9]{9}$/;
+            if (!phonePattern.test(phone)) {
+                document.getElementById("phoneError").innerHTML = "10 digits, start 6-9";
+                valid = false;
+            }
+            const placePattern = /^[A-Za-z. ]{3,25}$/;
+            if (!placePattern.test(place)) {
+                document.getElementById("placeError").innerHTML = "3–25 letters, dots/spaces";
+                valid = false;
+            }
+            const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+            if (!passwordPattern.test(password)) {
+                document.getElementById("passwordError").innerHTML = "Upper, lower, number, 8+";
+                valid = false;
+            }
+            return valid;
+        };
+    </script>
+</body>
+</html>
